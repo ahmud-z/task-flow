@@ -21,13 +21,8 @@ A modern and responsive Todo App built with **React**, **JavaScript**, **HTML**,
 - Tailwind CSS
 
 ## Screenshots
-
-### Home Page
-![Home Page](img1.jpg)
-
-### Task Management
-![Task Management](img2.jpg)
-
+<img width="580" height="730" alt="Screenshot_15" src="https://github.com/user-attachments/assets/8af2bead-0371-4829-b6f1-bc548649a7a4" />
+<img width="580" height="740" alt="Screenshot_16" src="https://github.com/user-attachments/assets/6ed4eb2e-2aaa-4b51-a3ea-8a170615c1cf" />
 
 
 ## Getting Started
