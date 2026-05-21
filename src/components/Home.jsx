@@ -5,7 +5,7 @@ const Home = () => {
     const [todos, setTodos] = useState([
         {
             id: 1,
-            title: "Go Home",
+            title: "Buy Some Books",
             isComplete: false
         },
         {
@@ -51,6 +51,8 @@ const Home = () => {
         }
     }
 
+    const [focused, setFocused] = useState(false);
+
     const todoDeleteHandler = (id) => {
         setTodos(todos.filter((todo) => todo.id != id))
     }
@@ -63,74 +65,92 @@ const Home = () => {
         setTodos(todos.map((todo) => todo.id === id ? { ...todo, isComplete: (!todo.isComplete) } : todo))
     }
 
-    return (
-        <main className='w-full h-screen flex justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-black'>
-            <div className='w-110 rounded-4xl bg-white/10 border border-white/20 my-24 p-4'>
-                <div className='flex flex-col items-center bg-[#EDEFFC]/10 h-full px-4 pt-10 rounded-2xl'>
+    const clearCompleted = () => {
+        setTodos(todos.filter((t) => t.isComplete != true))
+    }
 
-                    <div className="text-center mb-6">
-                        <h1 className="text-5xl font-bold tracking-tight text-white">
-                            Task-Flow
-                        </h1>
-                        <p className="text-slate-400 mt-2">
-                            Organize your task beautifully
-                        </p>
+    return (
+        <main className='w-full h-screen flex justify-center items-center bg-linear-to-br from-slate-950 via-slate-900 to-black'>
+            <div className='w-120 rounded-3xl bg-white/5 border border-white/10 p-2'>
+
+                <div className='flex flex-col h-160 items-center border border-white/5 px-6 py-8 rounded-2xl gap-0'>
+
+                    <div className="text-center mb-7">
+                        <h1 className="text-6xl font-medium text-white">Task-Flow</h1>
+                        <p className="text-white/50 text-sm mt-1">Organize your tasks beautifully</p>
                     </div>
 
-                    <div className='flex my-4'>
-                        <input value={todoTitle} onChange={(e) => setTodoTitle(e.target.value)} className='bg-gray-50 focus:outline-blue-500 text-lg border border-gray-400 rounded-l-md flex-1 py-3 px-4' type="text" name="" id="" placeholder='Enter your todo...' />
+                    <div className={`flex w-full mb-5 bg-white/5 border-2 rounded-xl overflow-hidden transition-colors ${focused ? 'border-teal-400/80' : 'border-white/12'}`}>
+                        <input
+                            value={todoTitle}
+                            onChange={e => setTodoTitle(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && addTodoHandler()}
+                            onFocus={() => setFocused(true)}
+                            onBlur={() => setFocused(false)}
+                            className='flex-1 bg-transparent text-white text-lg px-4 py-3 outline-none placeholder:text-white/50'
+                            placeholder='Add a new task…'
+                        />
                         <button
                             onClick={addTodoHandler}
-                            className="bg-blue-500 hover:bg-blue-600 active:scale-95 text-white px-6 py-4 rounded-r-xl font-medium transition-all duration-200 shadow-md"
+                            className="bg-teal-400 cursor-pointer hover:bg-teal-600 text-lg active:scale-95 text-black px-5 font-medium transition-all flex items-center gap-1.5"
                         >
                             Add
                         </button>
                     </div>
 
-                    <div className='flex gap-2 mb-8'>
-                        <button onClick={() => filterHandler("all")} className={`px-4 py-0.5 rounded transition ${activeFilterButton === "all" ? "bg-blue-500 text-white" : "bg-gray-400/30 text-white"}`}>
-                            All
-                        </button>
-                        <button onClick={() => filterHandler("active")} className={`px-4 py-0.5 rounded transition ${activeFilterButton === "active" ? "bg-blue-500 text-white" : "bg-gray-400/30 text-white"}`}>
-                            Active
-                        </button>
-                        <button onClick={() => filterHandler("completed")} className={`px-4 py-0.5 rounded transition ${activeFilterButton === "completed" ? "bg-blue-500 text-white" : "bg-gray-400/30 text-white"}`}>
-                            Completed
-                        </button>
+                    <div className='flex w-full gap-1.5 mb-6 bg-white/5 border border-white/10 rounded-xl p-1'>
+                        {['all', 'active', 'completed'].map(status => (
+                            <button
+                                key={status}
+                                onClick={() => filterHandler(status)}
+                                className={`flex-1 py-1.5 rounded-lg text-sm transition-all cursor-pointer capitalize ${activeFilterButton === status
+                                    ? 'bg-teal-400 text-black'
+                                    : 'text-white/50 hover:text-white/70'
+                                    }`}
+                            >
+                                {status}
+                            </button>
+                        ))}
                     </div>
 
-                    <div className='space-y-3 h-full w-full scrollbar-thumb-sky-700 scrollbar-track-sky-300/20 overflow-y-scroll'>
-                        {
-                            filteredTodos &&
-                            filteredTodos.map((todo) => (
-                                <div key={todo.id} className='bg-white p-4 rounded hover:shadow text-xl w-full flex gap-2 items-center justify-between'>
-
-                                    <div className='flex min-w-0'>
-                                        <input onChange={() => {
-                                            todoStatusHandler(todo.id)
-                                        }} type="checkbox" checked={todo.isComplete} />
-
-                                        <p className={`${todo.isComplete ? "line-through text-gray-500" : ""} break-words whitespace-normal w-full px-3`}>{todo.title}</p>
-                                    </div>
-
-                                    <div onClick={() => todoDeleteHandler(todo.id)} className='cursor-pointer hover:bg-gray-300/40 p-1 rounded'>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>                                   </div>
-                                </div>
-                            ))
-                        }
-
-                        {Object.keys(filteredTodos).length === 0 ? <div className='flex items-center text-lg justify-center h-full'>
-                            <p>No items found.</p>
-                        </div> : ""}
+                    <div className='w-full flex flex-col gap-2 flex-1 overflow-y-auto max-h-75 pr-0.5 scrollbar-thin scrollbar-thumb-teal-500/40 scrollbar-track-transparent'>
+                        {filteredTodos.length === 0 ? (
+                            <div className='text-white flex items-center justify-center text-md py-8 flex-1'>
+                                No tasks found!
+                            </div>
+                        ) : filteredTodos.map(todo => (
+                            <div
+                                key={todo.id}
+                                className={`flex items-center gap-2.5 bg-white/10 text-md rounded-xl px-3.5 py-3 transition-al}`}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={todo.isComplete}
+                                    onChange={() => todoStatusHandler(todo.id)}
+                                    className="w-4 h-4 accent-teal-400 cursor-pointer shrink-0"
+                                />
+                                <p className={`flex-1 text-lg wrap-break-words ${todo.isComplete ? 'line-through text-white/70' : 'text-white'}`}>
+                                    {todo.title}
+                                </p>
+                                <button
+                                    onClick={() => todoDeleteHandler(todo.id)}
+                                    className='text-white hover:text-red-500 cursor-pointer bg-white/5 hover:bg-red-500/15 p-1 rounded-md transition-all shrink-0'
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                </button>
+                            </div>
+                        ))}
                     </div>
 
-                    <footer className='w-full bg-slate-500/30 h-20'>
-                        <h1>{Object.keys(filteredTodos).length}</h1>
-                    </footer>
+                    {/* Footer */}
+                    <div className='w-full flex justify-between items-center mt-4 pt-3.5 border-t border-teal-400/40'>
+                        <span className='text-white/80'>{filteredTodos.filter(t => !t.isComplete).length} tasks left</span>
+                        <button onClick={clearCompleted} className='text-white/80 cursor-pointer hover:text-red-500 bg-gray-500/20 hover:bg-red-500/10 py-1 px-2 rounded-sm transition-colors'>
+                            Clear completed task
+                        </button>
+                    </div>
 
                 </div>
-
-
             </div>
         </main>
     );
